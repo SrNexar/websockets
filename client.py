@@ -2,8 +2,9 @@ import asyncio
 import websockets
 
 async def send_message():
-    async with websockets.connect("ws://localhost:8765") as websocket:
-        message = "Mensaje automático desde GitHub Actions"
+    uri = "ws://<websockets1>.herokuapp.com"  # Reemplaza <nombre-de-tu-aplicacion> con el nombre de tu aplicación Heroku
+    async with websockets.connect(uri) as websocket:
+        message = "Mensaje automático desde el cliente"
         await websocket.send(message)
         response = await websocket.recv()
         print(f"Respuesta del servidor: {response}")

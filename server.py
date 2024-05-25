@@ -1,20 +1,21 @@
 import asyncio
 import websockets
+import os
 
-# Función para manejar las conexiones de los clientes
 async def handle_client(websocket, path):
     while True:
-        # Espera un mensaje del cliente
-        message = await websocket.recv()
-        print(f"Mensaje recibido del cliente: {message}")
+        try:
+            message = await websocket.recv()
+            print(f"Mensaje recibido del cliente: {message}")
+            response = f"Mensaje recibido: {message}"
+            await websocket.send(response)
+        except websockets.ConnectionClosed:
+            print("Conexión cerrada")
+            break
 
-        # Envía un mensaje de respuesta al cliente
-        response = f"Mensaje recibido: {message}"
-        await websocket.send(response)
+# Heroku asigna un puerto a través de la variable de entorno PORT
+port = int(os.environ.get('PORT', 8765))
+start_server = websockets.serve(handle_client, "0.0.0.0", port)
 
-# Configura el servidor WebSocket
-start_server = websockets.serve(handle_client, "localhost", 8765)
-
-# Inicia el servidor
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
